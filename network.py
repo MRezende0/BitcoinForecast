@@ -7,11 +7,11 @@ import matplotlib.pyplot as plt
 from   sys import argv,exit
 from   keras.models import Sequential
 from   keras.layers import Dense,Dropout,GRU,Reshape
-from   keras.layers.normalization import BatchNormalization
+from tensorflow.keras.layers import BatchNormalization
 import sqlite3
 conn = sqlite3.connect('data.db')
 
-file_name = 'dataset.csv'
+file_name = 'price.csv'
 net = None
 wait_time = 530
 
@@ -62,11 +62,11 @@ def predictFuture(m1,m2,old_pred,writeToFile=False):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Forecast btc price with deep learning.")
-    parser.add_argument('-train',type=str,help="-train dataset.csv path")
-    parser.add_argument('-run',type=str,help="-run dataset.csv path")
+    parser.add_argument('-train',type=str,help="dataset_path")
+    parser.add_argument('-run',type=str,help="-run price.csv path")
     parser.add_argument('-model',type=str,help='-model model\'s path')
-    parser.add_argument('-iterations',type=int,help='-iteration number of epoches')
-    parser.add_argument('-finetune',type=str,help='-finetune base-model path')
+    parser.add_argument('-iterations',type=int,help='-iteration number_of_training_iterations')
+    parser.add_argument('-finetune',type=str,help='-finetune base_model_path')
     args = parser.parse_args()
     print(args)
 
@@ -76,8 +76,8 @@ if __name__ == '__main__':
     #data loading:
     file_name = args.run if args.run is not None else args.train
     print("Loading data...",end="")
-    d = open(file_name,'r')
-    data,labels = util.loadData(d)
+    d = "C:/Users/matheus.rezende/OneDrive - Cocal/Projetos/BitcoinForecast/price.csv"
+    data, labels = util.loadData(d)
     data = util.reduceMatRows(data)
     labels,m1,m2 =util.reduceVector(labels,getVal=True)
     print("{} chunk loaded!\n".format(len(labels)),end="")

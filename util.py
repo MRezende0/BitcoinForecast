@@ -1,18 +1,68 @@
 import requests
+import csv
 
 maxs =[]
 mins =[]
 
-def loadData(f_name):
-    data  = f_name.read().split("\n")
-    data = data[:len(data)-1]
-    label = []
-    for i in range(len(data)):
-        data[i] = data[i].split(",")
-        data[i] = [float(x) for x in data[i]]
-        label.append(data[i][len(data[i])-1])
-        data[i] = data[i][0:len(data[i])-1]
-    return data[:-2],label[2:]  #Removing first two and last two so each X[i] tries to predict Y[i+2] (i've used i+2 and not to i+1 to force it to predict the future (O) )
+# def loadData(f_name):
+#     data  = f_name.read().split("\n")
+#     data = data[:len(data)-1]
+#     label = []
+
+#     with open(f_name, 'r') as file:
+#         reader = csv.reader(file)
+#         # Pular o cabeçalho
+#         next(reader)  # Isso pula a primeira linha (cabeçalho)
+
+#         for row in reader:
+#             try:
+#                 # Certifique-se de que cada valor possa ser convertido em float
+#                 data.append([float(x) for x in row[:-1]])  # Assumindo que os dados estão nas colunas, exceto a última
+#                 label.append(float(row[-1]))  # Assumindo que a última coluna é o label
+#             except ValueError:
+#                 # Se houver erro ao converter, ignore a linha ou faça outro tratamento
+#                 print(f"Skipping row due to error: {row}")
+#                 continue
+
+#     for i in range(len(data)):
+#         data[i] = data[i].split(",")
+#         data[i] = [float(x) for x in data[i]]
+#         label.append(data[i][len(data[i])-1])
+#         data[i] = data[i][0:len(data[i])-1]
+#     return data[:-2],label[2:]  #Removing first two and last two so each X[i] tries to predict Y[i+2] (i've used i+2 and not to i+1 to force it to predict the future (O) )
+
+def loadData(file_name):
+    data = []
+    labels = []
+    
+    # Assegure-se de que file_name é uma string com o caminho correto do arquivo
+    with open(file_name, 'r') as file:  # Aqui passamos o caminho corretamente
+        reader = csv.reader(file)
+        next(reader)  # Pula o cabeçalho
+
+        for i, row in enumerate(reader, start=1):
+            if len(row) == 7:  # Ajuste conforme necessário
+                try:
+                    # Faça o pré-processamento da linha aqui
+                    data.append(row)
+                except Exception as e:
+                    print(f"Erro ao processar a linha {i}: {e}")
+            else:
+                print(f"Erro no formato da linha {i}: {row}")
+        
+        for row in reader:
+            try:
+                # Processa as linhas, convertendo os dados em floats
+                data.append([float(x) for x in row[:-1]])  # Colunas, exceto a última
+                labels.append(float(row[-1]))  # Última coluna como label
+            except ValueError:
+                # Caso haja erro na conversão
+                print(f"Erro na linha: {row}")
+                continue
+
+        print(f"Total de linhas válidas: {len(data)}")
+                
+    return data, labels
 
 def reduceVector(vec,getVal=False):
     vect = []
